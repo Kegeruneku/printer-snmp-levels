@@ -21,6 +21,7 @@ def getdetails(host, community):
 
   # HP ETHERNET MULTI-ENVIRONMENT,SN:XXXXXXXXXX,FN:XXXXXXX,SVCID:XXXXX,PID:HP LaserJet CM1415fn
   # Xerox WorkCentre 6505N; Net 95.45,ESS 201104251224,IOT 02.00.02,Boot 201009241127
+  # Xerox WorkCentre 7845 v1; SS 072.040.004.09100, NC 072.044.09100, UI 072.044.09100, ME 090.079.000, CC 072.044.09100, DF 007.019.000, FI 032.054.000, FA 003.011.009, CCOS 072.004.09100, NCOS 072.004.09100, SC 008.088.000, SU 010.116.00294
 
   details = dict()
 
@@ -36,12 +37,14 @@ def getdetails(host, community):
   # sysDescr.0
   res = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.1.0'), Version = 1, DestHost=host, Community=community)
 
-  match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
-
+  # Default details values (unknown)
   details['sn']    = 'unknown'
-  details['fn']    = 'unknown'
-  details['svcid'] = 'unknown'
-  details['pid']   = 'unknown'
+  details['fn']    = details['sn']
+  details['svcid'] = details['sn']
+  details['pid']   = details['sn']
+
+  # Case 1: HP printer
+  match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
 
   if match:
 
@@ -49,6 +52,13 @@ def getdetails(host, community):
     details['fn']    = match.group(2)
     details['svcid'] = match.group(3)
     details['pid']   = match.group(4)
+
+  # Case 2: Xerox printer
+  match = re.search(r'Xerox (.*);', res[0])
+
+  if match:
+
+    details['pid']    = 'Xerox ' + match.group(1)
 
   return details
 

@@ -53,6 +53,7 @@ This utility has been tested with the following printer models:
 
 * HP LaserJet CM1415fn
 * Xerox WorkCentre 6505N (initial support)
+* Xerox WorkCentre 7845 v1 (initial support)
 
 # Known issues
 
