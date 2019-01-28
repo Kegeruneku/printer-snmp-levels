@@ -20,6 +20,7 @@ def getmib(mibentry):
 def getdetails(host, community):
 
   # HP ETHERNET MULTI-ENVIRONMENT,SN:XXXXXXXXXX,FN:XXXXXXX,SVCID:XXXXX,PID:HP LaserJet CM1415fn
+  # Xerox WorkCentre 6505N; Net 95.45,ESS 201104251224,IOT 02.00.02,Boot 201009241127
 
   details = dict()
 
@@ -37,6 +38,11 @@ def getdetails(host, community):
 
   match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
 
+  details['sn']    = 'unknown'
+  details['fn']    = 'unknown'
+  details['svcid'] = 'unknown'
+  details['pid']   = 'unknown'
+
   if match:
 
     details['sn']    = match.group(1)
@@ -44,11 +50,11 @@ def getdetails(host, community):
     details['svcid'] = match.group(3)
     details['pid']   = match.group(4)
 
-    return details
+  return details
 
 def getcartridgelevels(host, community):
 
-  cartridge_number = 5
+  cartridge_number = 6
 
   res = dict()
 
@@ -64,7 +70,7 @@ def getcartridgelevels(host, community):
 # Runtime
 if __name__ == "__main__":
 
-  parser = argparse.ArgumentParser(description='Get HP printer cartridge levels using SNMP')
+  parser = argparse.ArgumentParser(description='Get printer cartridge levels using SNMP')
   parser.add_argument('host', help="The IP address or hostname of the printer")
   parser.add_argument('community', help="The SNMP community to use (often 'public')")
   args = parser.parse_args()
@@ -82,6 +88,6 @@ if __name__ == "__main__":
 
   for key in levels:
 
-    print levels[key]["name"] + " has level " + levels[key]["level"] + "%"
+    print "  * " + levels[key]["name"] + " level is " + levels[key]["level"] + " (% or pages left)"
 
   print "\nPlease contact " + details['contact'] + " for details."

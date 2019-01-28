@@ -1,7 +1,7 @@
-hp-snmp-levels
-==============
+printer-snmp-levels
+===================
 
-Get HP printer cartridge levels using SNMP
+Get a printer cartridge levels using SNMP
 
 # Requirements
 
@@ -23,9 +23,9 @@ Tested with Python 2.7.8.
 # Usage
 
 ```
-usage: hp-snmp-levels.py [-h] host community
+usage: printer-snmp-levels.py [-h] host community
 
-Get HP printer cartridge levels using SNMP
+Get printer cartridge levels using SNMP
 
 positional arguments:
   host        The IP address or hostname of the printer
@@ -35,7 +35,7 @@ positional arguments:
 # Example
 
 ```
-$ ./hp-snmp-levels.py 192.168.1.1 public
+$ ./printer-snmp-levels.py 192.168.1.1 public
 This is a HP LaserJet CM1415fn printer, named NPIAD0001 and with serial no. 1337DEADBF, up since the 2014-10-07
 
 Cartridge levels:
@@ -52,6 +52,7 @@ Please contact it@company.com for details.
 This utility has been tested with the following printer models:
 
 * HP LaserJet CM1415fn
+* Xerox WorkCentre 6505N (initial support)
 
 # Known issues
 
