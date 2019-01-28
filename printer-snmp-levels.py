@@ -22,6 +22,7 @@ def getdetails(host, community):
   # HP ETHERNET MULTI-ENVIRONMENT,SN:XXXXXXXXXX,FN:XXXXXXX,SVCID:XXXXX,PID:HP LaserJet CM1415fn
   # Xerox WorkCentre 6505N; Net 95.45,ESS 201104251224,IOT 02.00.02,Boot 201009241127
   # Xerox WorkCentre 7845 v1; SS 072.040.004.09100, NC 072.044.09100, UI 072.044.09100, ME 090.079.000, CC 072.044.09100, DF 007.019.000, FI 032.054.000, FA 003.011.009, CCOS 072.004.09100, NCOS 072.004.09100, SC 008.088.000, SU 010.116.00294
+  # Lexmark CX510de version NH63.GM.N638 kernel 3.0.0 All-N-1
 
   details = dict()
 
@@ -59,6 +60,13 @@ def getdetails(host, community):
   if match:
 
     details['pid']    = 'Xerox ' + match.group(1)
+
+  # Case 3: Xerox printer
+  match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res[0])
+
+  if match:
+
+    details['pid']    = 'Lexmark ' + match.group(1)
 
   return details
 
