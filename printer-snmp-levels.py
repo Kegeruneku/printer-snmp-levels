@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-# Get HP printer cartridge levels using SNMP
+# Get HP printer consumables levels using SNMP
 
 # Imports
 import argparse
@@ -52,13 +52,12 @@ def getdetails(host, community):
 
   return details
 
-def getcartridgelevels(host, community):
+def getconsumableslevels(host, community):
 
-  cartridge_number = 6
-
+  consumables_number = len(netsnmp.snmpwalk(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.6.1"), Version = 1, DestHost=host, Community=community))
   res = dict()
 
-  for i in range(1, cartridge_number):
+  for i in range(1, consumables_number + 1):
 
     res[i] = dict()
 
@@ -70,7 +69,7 @@ def getcartridgelevels(host, community):
 # Runtime
 if __name__ == "__main__":
 
-  parser = argparse.ArgumentParser(description='Get printer cartridge levels using SNMP')
+  parser = argparse.ArgumentParser(description='Get printer consumables levels using SNMP')
   parser.add_argument('host', help="The IP address or hostname of the printer")
   parser.add_argument('community', help="The SNMP community to use (often 'public')")
   args = parser.parse_args()
@@ -82,9 +81,9 @@ if __name__ == "__main__":
 
   print "This is a " + details['pid'] + " printer, named " + details['name'] + " and with serial no. " + details['sn'] + ", up since the " + str(date.fromtimestamp(time.time() - int(details['uptime']))) + "\n"
 
-  levels = getcartridgelevels(host, community)
+  levels = getconsumableslevels(host, community)
 
-  print "Cartridge levels:"
+  print "Consumables levels:"
 
   for key in levels:
 
