@@ -36,21 +36,18 @@ def getdetails(host, community):
   # sysDescr.0
   res = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.1.0'), Version = 1, DestHost=host, Community=community)
 
-  # Default details values (unknown)
-  details['sn']    = 'unknown'
-  details['fn']    = details['sn']
-  details['svcid'] = details['sn']
-  details['pid']   = details['sn']
+  # Default details values (undefined values)
+  details['pid']      = 'unknown'
+  details['sn']       = 'unknown'
+  details['contact']  = 'somebody'
 
   # Case 1: HP printer
   match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
 
   if match:
 
-    details['sn']    = match.group(1)
-    details['fn']    = match.group(2)
-    details['svcid'] = match.group(3)
     details['pid']   = match.group(4)
+    details['sn']    = match.group(1)
 
   # Case 2: Xerox printer
   match = re.search(r'Xerox (.*);', res[0])
@@ -64,6 +61,7 @@ def getdetails(host, community):
 
   if match:
 
+    # Lexmark CX510de XXXXXXXXXXXXX LW80.GM7.P210
     match          = re.search(r'(Lexmark .*) (.*) (.*)', netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.25.3.2.1.3.1'), Version = 1, DestHost=host, Community=community)[0])
     details['pid'] = match.group(1)
     details['sn']  = match.group(2)
@@ -101,10 +99,9 @@ if __name__ == "__main__":
 
   levels = getconsumableslevels(host, community)
 
-  print("Consumables levels:")
+  print("Consumables levels (in % or remaining page number):")
 
   for key in levels:
-
-    print("  * " + str(levels[key]["name"]) + " level is " + str(levels[key]["level"]) + " (% or pages left)")
+    print('* {:<30}: {}'.format(str(levels[key]["name"]), str(levels[key]["level"])))
 
   print("\nPlease contact " + details['contact'] + " for details.")
