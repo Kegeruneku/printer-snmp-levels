@@ -39,7 +39,6 @@ def getdetails(host, community):
   # Default details values (undefined values)
   details['pid']      = 'unknown'
   details['sn']       = 'unknown'
-  details['contact']  = 'somebody'
 
   # Case 1: HP printer
   match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
