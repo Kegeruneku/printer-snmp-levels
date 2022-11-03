@@ -80,6 +80,11 @@ def getconsumableslevels(host, community):
     res[i]['name'] = netsnmp.snmpget(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.6.1." + str(i)), Version = 1, DestHost=host, Community=community)[0]
     res[i]['level'] = netsnmp.snmpget(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.9.1." + str(i)), Version = 1, DestHost=host, Community=community)[0]
 
+    # HACK: Some Lexmark printers may attempt to send back internationalized consumable names, try to workaround this by decoding the hex string
+    # Why the heck does it use CP850 instead of ISO/UTF-8 ???
+    if isinstance(res[i]['name'], bytes):
+        res[i]['name'] = res[i]['name'].decode('cp850')
+
   return res
 
 # Runtime
