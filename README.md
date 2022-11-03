@@ -5,20 +5,7 @@ Get a printer consumable levels using SNMP
 
 # Requirements
 
-This utility requires python Net-SNMP bindings.
-
-Debian like:
-```
-apt-get install python-pynetsnmp # Squeeze, Wheezy
-apt-get install python-netsnmp # Jessie+
-```
-
-RHEL like:
-```
-yum install net-snmp-python
-```
-
-Tested with Python 2.7.8.
+This utility requires Python 3 and Net-SNMP bindings. (python3-netsnmp on Debian-like, net-snmp-python on EL-like)
 
 # Usage
 
