@@ -1,6 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
-
+#!/usr/bin/python3
 # Get HP printer consumables levels using SNMP
 
 # Imports
@@ -97,14 +95,14 @@ if __name__ == "__main__":
 
   details = getdetails(host, community)
 
-  print "This is a " + details['pid'] + " printer, named " + details['name'] + " and with serial no. " + details['sn'] + ", up since the " + str(date.fromtimestamp(time.time() - int(details['uptime']))) + "\n"
+  print("This is a " + details['pid'] + " printer, named " + details['name'] + " and with serial no. " + details['sn'] + ", up since the " + str(date.fromtimestamp(time.time() - int(details['uptime']))) + "\n")
 
   levels = getconsumableslevels(host, community)
 
-  print "Consumables levels:"
+  print("Consumables levels:")
 
   for key in levels:
 
-    print "  * " + levels[key]["name"] + " level is " + levels[key]["level"] + " (% or pages left)"
+    print("  * " + str(levels[key]["name"]) + " level is " + str(levels[key]["level"]) + " (% or pages left)")
 
-  print "\nPlease contact " + details['contact'] + " for details."
+  print("\nPlease contact " + details['contact'] + " for details.")
