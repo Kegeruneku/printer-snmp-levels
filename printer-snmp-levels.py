@@ -59,12 +59,14 @@ def getdetails(host, community):
 
     details['pid']    = 'Xerox ' + match.group(1)
 
-  # Case 3: Xerox printer
+  # Case 3: Lexmark printer
   match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res[0])
 
   if match:
 
-    details['pid']    = 'Lexmark ' + match.group(1)
+    match          = re.search(r'(Lexmark .*) (.*) (.*)', netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.25.3.2.1.3.1'), Version = 1, DestHost=host, Community=community)[0])
+    details['pid'] = match.group(1)
+    details['sn']  = match.group(2)
 
   return details
 
