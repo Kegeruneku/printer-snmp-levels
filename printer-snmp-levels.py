@@ -107,6 +107,7 @@ if __name__ == "__main__":
   print("Consumables levels (in % or remaining page number):")
 
   for key in levels:
-    print('* {:<30}: {}'.format(str(levels[key]["name"]), str(levels[key]["level"])))
+    if levels[key]["name"]:
+        print('* {:<60}: {}'.format(str(levels[key]["name"]), str(levels[key]["level"])))
 
   print("\nPlease contact " + details['contact'] + " for details.")
