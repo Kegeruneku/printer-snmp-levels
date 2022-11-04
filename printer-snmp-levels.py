@@ -37,8 +37,11 @@ def getdetails(host, community):
   res = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.1.0'), Version = 1, DestHost=host, Community=community)
 
   # Default details values (undefined values)
-  details['pid']      = 'unknown'
-  details['sn']       = 'unknown'
+  details['pid']       = 'unknown'
+  details['sn']        = 'unknown'
+
+  if not details['contact']:
+    details['contact'] = 'somebody'
 
   # Case 1: HP printer
   match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
