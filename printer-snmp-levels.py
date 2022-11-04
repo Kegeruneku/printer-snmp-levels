@@ -54,6 +54,7 @@ def getdetails(host, community):
   if match:
 
     details['pid']    = 'Xerox ' + match.group(1)
+    details['sn']     = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.43.5.1.1.17.1'), Version = 1, DestHost=host, Community=community)[0]
 
   # Case 3: Lexmark printer
   match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res[0])
