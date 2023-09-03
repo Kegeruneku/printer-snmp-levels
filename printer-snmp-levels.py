@@ -4,18 +4,13 @@
 # Imports
 import argparse
 import re
-import netsnmp
 import time
 from datetime import date
 
+from easysnmp import Session
+
 # Functions
-def getmib(mibentry):
-
-  oid = netsnmp.Varbind(mibentry)
-  res = netsnmp.snmpget(oid, Version = 1, DestHost=host, Community=community)
-  return res[0]
-
-def getdetails(host, community):
+def getdetails(session):
 
   # HP ETHERNET MULTI-ENVIRONMENT,SN:XXXXXXXXXX,FN:XXXXXXX,SVCID:XXXXX,PID:HP LaserJet CM1415fn
   # Xerox WorkCentre 6505N; Net 95.45,ESS 201104251224,IOT 02.00.02,Boot 201009241127
@@ -25,16 +20,16 @@ def getdetails(host, community):
   details = dict()
 
   # sysName.0
-  details['name']    = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.5.0'), Version = 1, DestHost=host, Community=community)[0]
+  details['name']    = session.get('.1.3.6.1.2.1.1.5.0').value
 
   # sysContact.0
-  details['contact'] = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.4.0'), Version = 1, DestHost=host, Community=community)[0]
+  details['contact'] = session.get('.1.3.6.1.2.1.1.4.0').value
 
   # sysUpTimeInstance
-  details['uptime'] = int(netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.3.0'), Version = 1, DestHost=host, Community=community)[0]) / 100
+  details['uptime'] = int(session.get('.1.3.6.1.2.1.1.3.0').value) / 100
 
   # sysDescr.0
-  res = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.1.1.0'), Version = 1, DestHost=host, Community=community)
+  res = session.get('.1.3.6.1.2.1.1.1.0').value
 
   # Default details values (undefined values)
   details['pid']       = 'unknown'
@@ -57,7 +52,7 @@ def getdetails(host, community):
   if match:
 
     details['pid']    = 'Xerox ' + match.group(1)
-    details['sn']     = netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.43.5.1.1.17.1'), Version = 1, DestHost=host, Community=community)[0]
+    details['sn']     = session.get('.1.3.6.1.2.1.43.5.1.1.17.1')
 
   # Case 3: Lexmark printer
   match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res[0])
@@ -65,23 +60,23 @@ def getdetails(host, community):
   if match:
 
     # Lexmark CX510de XXXXXXXXXXXXX LW80.GM7.P210
-    match          = re.search(r'(Lexmark .*) (.*) (.*)', netsnmp.snmpget(netsnmp.Varbind('.1.3.6.1.2.1.25.3.2.1.3.1'), Version = 1, DestHost=host, Community=community)[0])
+    match          = re.search(r'(Lexmark .*) (.*) (.*)', session.get('.1.3.6.1.2.1.25.3.2.1.3.1'))
     details['pid'] = match.group(1)
     details['sn']  = match.group(2)
 
   return details
 
-def getconsumableslevels(host, community):
+def getconsumableslevels(session):
 
-  consumables_number = len(netsnmp.snmpwalk(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.6.1"), Version = 1, DestHost=host, Community=community))
+  consumables_number = len(session.walk('.1.3.6.1.2.1.43.11.1.1.6.1'))
   res = dict()
 
   for i in range(1, consumables_number + 1):
 
     res[i] = dict()
 
-    res[i]['name'] = netsnmp.snmpget(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.6.1." + str(i)), Version = 1, DestHost=host, Community=community)[0]
-    res[i]['level'] = netsnmp.snmpget(netsnmp.Varbind(".1.3.6.1.2.1.43.11.1.1.9.1." + str(i)), Version = 1, DestHost=host, Community=community)[0]
+    res[i]['name'] = session.get(".1.3.6.1.2.1.43.11.1.1.6.1." + str(i)).value
+    res[i]['level'] = session.get(".1.3.6.1.2.1.43.11.1.1.9.1." + str(i)).value
 
     # HACK: Some Lexmark printers may attempt to send back internationalized consumable names, try to workaround this by decoding the hex string
     # Why the heck does it use CP850 instead of ISO/UTF-8 ???
@@ -101,11 +96,14 @@ if __name__ == "__main__":
   host = args.host
   community = args.community
 
-  details = getdetails(host, community)
+  # Create an SNMP session to be used for all our requests
+  session = Session(hostname=host, community=community, version=2)
+
+  details = getdetails(session)
 
   print("This is a " + details['pid'] + " printer, named " + details['name'] + " and with serial no. " + details['sn'] + ", up since the " + str(date.fromtimestamp(time.time() - int(details['uptime']))) + "\n")
 
-  levels = getconsumableslevels(host, community)
+  levels = getconsumableslevels(session)
 
   print("Consumables levels (in % or remaining page number):")
 
