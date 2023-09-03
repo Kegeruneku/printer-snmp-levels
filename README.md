@@ -5,7 +5,7 @@ Get a printer consumable levels using SNMP
 
 # Requirements
 
-This utility requires Python 3 and Net-SNMP bindings. (python3-netsnmp on Debian-like, net-snmp-python on EL-like)
+This utility requires Python 3 and EasySNMP. (python3-easysnmp on Debian-like, easysnmp-python on EL-like)
 
 # Usage
 
