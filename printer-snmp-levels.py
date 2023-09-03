@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Get HP printer consumables levels using SNMP
+# Get SNMP-enabled printer consumables levels using SNMP
 
 # Imports
 import argparse
