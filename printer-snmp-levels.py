@@ -39,7 +39,7 @@ def getdetails(session):
     details['contact'] = 'somebody'
 
   # Case 1: HP printer
-  match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res[0])
+  match = re.search(r'HP ETHERNET MULTI-ENVIRONMENT,SN:(.*),FN:(.*),SVCID:(.*),PID:(.*)', res)
 
   if match:
 
@@ -47,7 +47,7 @@ def getdetails(session):
     details['sn']    = match.group(1)
 
   # Case 2: Xerox printer
-  match = re.search(r'Xerox (.*);', res[0])
+  match = re.search(r'Xerox (.*);', res)
 
   if match:
 
@@ -55,12 +55,12 @@ def getdetails(session):
     details['sn']     = session.get('.1.3.6.1.2.1.43.5.1.1.17.1')
 
   # Case 3: Lexmark printer
-  match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res[0])
+  match = re.search(r'Lexmark (.*) version (.*) kernel (.*)', res)
 
   if match:
 
     # Lexmark CX510de XXXXXXXXXXXXX LW80.GM7.P210
-    match          = re.search(r'(Lexmark .*) (.*) (.*)', session.get('.1.3.6.1.2.1.25.3.2.1.3.1'))
+    match          = re.search(r'(Lexmark .*) (.*) (.*)', session.get('.1.3.6.1.2.1.25.3.2.1.3.1').value)
     details['pid'] = match.group(1)
     details['sn']  = match.group(2)
 
